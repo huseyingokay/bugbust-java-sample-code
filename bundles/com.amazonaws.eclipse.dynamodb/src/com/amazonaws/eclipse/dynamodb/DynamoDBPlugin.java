@@ -147,8 +147,7 @@ public class DynamoDBPlugin extends AbstractAwsPlugin {
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            if ((event.getProperty()
-                        == TestToolPreferencePage.DEFAULT_PORT_PREFERENCE_NAME)
+            if ((event.getProperty().equals(TestToolPreferencePage.DEFAULT_PORT_PREFERENCE_NAME))
                     && !TestToolManager.INSTANCE.isRunning()) {
 
                 RegionUtils.addLocalService(ServiceAbbreviations.DYNAMODB,
