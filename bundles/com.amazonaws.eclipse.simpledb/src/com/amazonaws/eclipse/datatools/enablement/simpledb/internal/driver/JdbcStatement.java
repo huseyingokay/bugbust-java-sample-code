@@ -457,13 +457,7 @@ public class JdbcStatement implements Statement {
             int pos = this.sql.lastIndexOf(" ");
             String domain = convertSQLIdentifierToCatalogFormat(this.sql.substring(pos + 1).trim(),
                     DELIMITED_IDENTIFIER_QUOTE);
-            List<String> pending = this.conn.getPendingColumns(domain);
-            if (pending != null) {
-                pending = new ArrayList<>(pending);
-                for (String attr : pending) {
-                    this.conn.removePendingColumn(domain, attr);
-                }
-            }
+            modifyDomain(domain);
             req = new DeleteDomainRequest().withDomainName(domain);
         } else if (lowcaseSql.startsWith("delete from")) {
             req = prepareDeleteRowRequest();
@@ -485,20 +479,32 @@ public class JdbcStatement implements Statement {
                 ((List<Object>) req).add(new PutAttributesRequest().withDomainName(domain).withItemName("item" + i).withAttributes(attr));
             }
         }
-
         if (req != null) {
-            int result = executeSDBRequest(req);
-            if (this.params != null) {
-                for (Object obj : this.params) {
-                    if (obj instanceof SimpleDBItemName) {
-                        ((SimpleDBItemName) obj).setPersisted(true);
-                    }
+            return returnResult(req);
+        }
+        throw new SQLException("unsupported update: " + this.sql);
+    }
+
+    private int returnResult(Object req){
+        int result = executeSDBRequest(req);
+        if (this.params != null) {
+            for (Object obj : this.params) {
+                if (obj instanceof SimpleDBItemName) {
+                    ((SimpleDBItemName) obj).setPersisted(true);
                 }
             }
-            return result;
         }
+        return result;
+    }
 
-        throw new SQLException("unsupported update: " + this.sql);
+    private void modifyDomain(String domain){
+        List<String> pending = this.conn.getPendingColumns(domain);
+        if (pending != null) {
+            pending = new ArrayList<>(pending);
+            for (String attr : pending) {
+                this.conn.removePendingColumn(domain, attr);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
