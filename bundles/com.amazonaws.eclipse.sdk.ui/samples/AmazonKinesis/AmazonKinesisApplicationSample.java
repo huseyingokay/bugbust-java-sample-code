@@ -28,7 +28,7 @@ import com.amazonaws.services.kinesis.clientlibrary.lib.worker.InitialPositionIn
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration;
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.Worker;
 import com.amazonaws.services.kinesis.model.ResourceNotFoundException;
-
+import com.amazonaws.regions.Regions;
 /**
  * Sample Amazon Kinesis Application.
  */
@@ -116,7 +116,7 @@ public final class AmazonKinesisApplicationSample {
         // Delete the stream
         AmazonKinesis kinesis = AmazonKinesisClientBuilder.standard()
             .withCredentials(credentialsProvider)
-            .withRegion("us-west-2")
+            .withRegion(Regions.US_WEST_2)
             .build();
 
         System.out.printf("Deleting the Amazon Kinesis stream used by the sample. Stream Name = %s.\n",
