@@ -349,7 +349,7 @@ class BundleJob extends Job {
 
         File certificateFile = new File(accountInfo.getEc2CertificateFile());
         String certificateBaseFileName = certificateFile.getName();
-        executeRemote(certificateBaseFileName, "Unable to remove EC2 certificate: );
+        executeRemote(certificateBaseFileName, "Unable to remove EC2 certificate: ");
         executeRemote(privateKeyBaseFileName, "Unable to remove EC2 private key: ");
     }
 
