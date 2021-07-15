@@ -349,21 +349,16 @@ class BundleJob extends Job {
 
         File certificateFile = new File(accountInfo.getEc2CertificateFile());
         String certificateBaseFileName = certificateFile.getName();
+        executeRemote(certificateBaseFileName, "Unable to remove EC2 certificate: );
+        executeRemote(privateKeyBaseFileName, "Unable to remove EC2 private key: ");
+    }
 
+    private void executeRemote(String fileName, String message) {
         try {
-            remoteCommandUtils.executeRemoteCommand("rm /mnt/" + certificateBaseFileName, instance);
+            remoteCommandUtils.executeRemoteCommand("rm /mnt/" + fileName, instance);
         } catch (IOException e) {
             Status status = new Status(IStatus.WARNING, Ec2Plugin.PLUGIN_ID,
-                    "Unable to remove EC2 certificate: " + e.getMessage(), e);
-            StatusManager.getManager().handle(status, StatusManager.LOG);
-        }
-        monitor.worked(5);
-
-        try {
-            remoteCommandUtils.executeRemoteCommand("rm /mnt/" + privateKeyBaseFileName, instance);
-        } catch (IOException e) {
-            Status status = new Status(IStatus.WARNING, Ec2Plugin.PLUGIN_ID,
-                    "Unable to remove EC2 private key: " + e.getMessage(), e);
+                    message + e.getMessage(), e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
         monitor.worked(5);
